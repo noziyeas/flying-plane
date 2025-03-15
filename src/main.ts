@@ -12,6 +12,14 @@ class Game {
     private ringManager: RingManager;
     private score: number = 0;
     private keysPressed: Set<string> = new Set();
+    private touchControls: { [key: string]: boolean } = {
+        up: false,
+        down: false,
+        left: false,
+        right: false,
+        speedUp: false,
+        speedDown: false
+    };
 
     constructor() {
         // Initialize scene
@@ -61,6 +69,9 @@ class Game {
         window.addEventListener('keydown', this.onKeyDown.bind(this));
         window.addEventListener('keyup', this.onKeyUp.bind(this));
 
+        // Touch controls
+        this.setupTouchControls();
+
         // Add instructions to HUD
         const instructions = document.createElement('div');
         instructions.innerHTML = `
@@ -87,6 +98,54 @@ class Game {
         this.animate();
     }
 
+    private setupTouchControls(): void {
+        const controls = ['up', 'down', 'left', 'right'];
+        controls.forEach(control => {
+            const button = document.getElementById(control);
+            if (button) {
+                button.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.touchControls[control] = true;
+                });
+                button.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    this.touchControls[control] = false;
+                });
+            }
+        });
+
+        // Speed controls
+        const speedUp = document.getElementById('speed-up');
+        const speedDown = document.getElementById('speed-down');
+        
+        if (speedUp) {
+            speedUp.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.touchControls.speedUp = true;
+            });
+            speedUp.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.touchControls.speedUp = false;
+            });
+        }
+
+        if (speedDown) {
+            speedDown.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.touchControls.speedDown = true;
+            });
+            speedDown.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.touchControls.speedDown = false;
+            });
+        }
+
+        // Prevent default touch behaviors
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+
     private onWindowResize(): void {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
@@ -102,9 +161,18 @@ class Game {
     }
 
     private handleInput(): void {
+        // Handle keyboard input
         this.keysPressed.forEach(key => {
             this.plane.handleInput(key);
         });
+
+        // Handle touch input
+        if (this.touchControls.up) this.plane.handleInput('ArrowUp');
+        if (this.touchControls.down) this.plane.handleInput('ArrowDown');
+        if (this.touchControls.left) this.plane.handleInput('ArrowLeft');
+        if (this.touchControls.right) this.plane.handleInput('ArrowRight');
+        if (this.touchControls.speedUp) this.plane.handleInput('Shift');
+        if (this.touchControls.speedDown) this.plane.handleInput('Control');
     }
 
     private updateHUD(): void {

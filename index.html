@@ -34,6 +34,49 @@
         #score {
             margin-bottom: 10px;
         }
+        #mobile-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            touch-action: none;
+        }
+        .control-group {
+            display: flex;
+            gap: 10px;
+        }
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 2px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            touch-action: none;
+        }
+        .speed-controls {
+            position: fixed;
+            right: 20px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        @media (min-width: 1024px) {
+            #mobile-controls, .speed-controls {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -41,6 +84,20 @@
     <div id="hud">
         <div id="score">Score: 0</div>
         <div id="speed">Speed: 0 km/h</div>
+    </div>
+    <div id="mobile-controls">
+        <div class="control-group">
+            <button class="control-btn" id="left">←</button>
+            <button class="control-btn" id="right">→</button>
+        </div>
+        <div class="control-group">
+            <button class="control-btn" id="up">↑</button>
+            <button class="control-btn" id="down">↓</button>
+        </div>
+    </div>
+    <div class="speed-controls">
+        <button class="control-btn" id="speed-up">+</button>
+        <button class="control-btn" id="speed-down">-</button>
     </div>
     <script type="module" src="/src/main.ts"></script>
 </body>
