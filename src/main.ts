@@ -103,13 +103,18 @@ class Game {
         controls.forEach(control => {
             const button = document.getElementById(control);
             if (button) {
-                button.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.touchControls[control] = true;
+                ['touchstart', 'mousedown'].forEach(eventType => {
+                    button.addEventListener(eventType, (e) => {
+                        e.preventDefault();
+                        this.touchControls[control] = true;
+                    });
                 });
-                button.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    this.touchControls[control] = false;
+
+                ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(eventType => {
+                    button.addEventListener(eventType, (e) => {
+                        e.preventDefault();
+                        this.touchControls[control] = false;
+                    });
                 });
             }
         });
@@ -119,31 +124,49 @@ class Game {
         const speedDown = document.getElementById('speed-down');
         
         if (speedUp) {
-            speedUp.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.touchControls.speedUp = true;
+            ['touchstart', 'mousedown'].forEach(eventType => {
+                speedUp.addEventListener(eventType, (e) => {
+                    e.preventDefault();
+                    this.touchControls.speedUp = true;
+                });
             });
-            speedUp.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                this.touchControls.speedUp = false;
+
+            ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(eventType => {
+                speedUp.addEventListener(eventType, (e) => {
+                    e.preventDefault();
+                    this.touchControls.speedUp = false;
+                });
             });
         }
 
         if (speedDown) {
-            speedDown.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.touchControls.speedDown = true;
+            ['touchstart', 'mousedown'].forEach(eventType => {
+                speedDown.addEventListener(eventType, (e) => {
+                    e.preventDefault();
+                    this.touchControls.speedDown = true;
+                });
             });
-            speedDown.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                this.touchControls.speedDown = false;
+
+            ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(eventType => {
+                speedDown.addEventListener(eventType, (e) => {
+                    e.preventDefault();
+                    this.touchControls.speedDown = false;
+                });
             });
         }
 
         // Prevent default touch behaviors
-        document.addEventListener('touchmove', (e) => {
+        const preventDefaults = (e: Event) => {
             e.preventDefault();
-        }, { passive: false });
+            e.stopPropagation();
+        };
+
+        document.addEventListener('touchmove', preventDefaults, { passive: false });
+        document.addEventListener('touchstart', preventDefaults, { passive: false });
+        document.addEventListener('touchend', preventDefaults, { passive: false });
+        document.addEventListener('gesturestart', preventDefaults, { passive: false });
+        document.addEventListener('gesturechange', preventDefaults, { passive: false });
+        document.addEventListener('gestureend', preventDefaults, { passive: false });
     }
 
     private onWindowResize(): void {
